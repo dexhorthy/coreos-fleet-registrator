@@ -1,0 +1,16 @@
+[Unit]
+Description=Registrator Service
+Requires=docker.service
+After=docker.service
+
+[Service]
+EnvironmentFile=/etc/environment
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill registrator
+ExecStartPre=-/usr/bin/docker rm -f registrator
+ExecStartPre=/usr/bin/docker pull gliderlabs/registrator:latest
+ExecStart=/usr/bin/docker run --name registrator --volume "/var/run/docker.sock:/tmp/docker.sock" gliderlabs/registrator:latest -ip ${COREOS_PUBLIC_IPV4} etcd://${COREOS_PUBLIC_IPV4}:2379/services/registrator
+
+[X-Fleet]
+Conflicts=registrator@*
+

@@ -1,0 +1,14 @@
+[Unit]
+Description=Nginx Example
+Requires=docker.service
+After=docker.service
+
+[Service]
+TimeoutStartSec=120
+ExecStartPre=-/usr/bin/docker kill nginx
+ExecStartPre=-/usr/bin/docker rm -f nginx
+ExecStartPre=/usr/bin/docker pull nginx:latest
+ExecStart=/usr/bin/docker run --name nginx -P nginx:latest 
+
+[X-Fleet]
+Conflicts=nginx@*
